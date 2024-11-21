@@ -1,10 +1,9 @@
 package ru.sber.mobile_phone_shop.repository.impl;
 
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.postgresql.util.PGobject;
 import ru.sber.mobile_phone_shop.datasource.ConnectionManager;
+import ru.sber.mobile_phone_shop.exception.NotValidFieldInputException;
 import ru.sber.mobile_phone_shop.model.Phone;
 import ru.sber.mobile_phone_shop.repository.PhoneRepository;
 import ru.sber.mobile_phone_shop.repository.mapper.PhoneResultMapper;
@@ -19,17 +18,23 @@ import java.sql.Types;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Репозиторий для работы с базой данных (БД) содержащей информацию о телефонах
+ */
 public class PhoneRepositoryImpl implements PhoneRepository {
-    private static final Logger log = LogManager.getLogger(PhoneRepositoryImpl.class);
+    private static final Logger logger = LogManager.getLogger(PhoneRepositoryImpl.class);
     private final ConnectionManager connectionManager;
     private final PhoneResultMapper phoneResultMapper;
-    private static final String ERR_MSG = "Не верно введены данные для запроса";
 
     public PhoneRepositoryImpl(ConnectionManager connectionManager, PhoneResultMapper phoneResultMapper) {
         this.connectionManager = connectionManager;
         this.phoneResultMapper = phoneResultMapper;
     }
 
+    /**
+     * Найти и вернуть все записи из БД с информацией о телефонах
+     * @return все записи о телефонах
+     */
     @Override
     public List<Phone> findAll() {
         String query = "SELECT id, model, manufacturer, production_date, serial_number, color FROM phones;";
@@ -38,11 +43,16 @@ public class PhoneRepositoryImpl implements PhoneRepository {
             ResultSet resultSet = statement.executeQuery(query);
             return phoneResultMapper.mapAll(resultSet);
         } catch (SQLException e) {
-            log.log(Level.ERROR, e.getMessage());
+            logger.error(e);
         }
         return List.of();
     }
 
+    /**
+     * Записать новую запись о телефоне
+     * @param phone информация о телефоне
+     * @return запись сохраненная в БД
+     */
     @Override
     public Phone save(Phone phone) {
         String query = "INSERT INTO phones (model, manufacturer, production_date, serial_number, color) VALUES (?, ?, ?, ?, ?) RETURNING *;";
@@ -56,11 +66,16 @@ public class PhoneRepositoryImpl implements PhoneRepository {
             ResultSet resultSet = statement.executeQuery();
             return phoneResultMapper.map(resultSet);
         } catch (SQLException e) {
-            log.log(Level.ERROR, e.getMessage());
+            logger.error(e);
         }
-        throw new IllegalArgumentException(ERR_MSG);
+        throw new NotValidFieldInputException();
     }
 
+    /**
+     * Найти запись о телефоне по id
+     * @param id уникальный ключ записи в БД
+     * @return запись о телефоне обернутая в класс Optional, для недопущения вызова NullPointerException
+     */
     @Override
     public Optional<Phone> findById(Long id) {
         String query = "SELECT id, model, manufacturer, production_date, serial_number, color FROM phones WHERE id = ?;";
@@ -70,11 +85,17 @@ public class PhoneRepositoryImpl implements PhoneRepository {
             ResultSet resultSet = statement.executeQuery();
             return Optional.of(phoneResultMapper.map(resultSet));
         } catch (SQLException e) {
-            log.log(Level.ERROR, e.getMessage());
+            logger.error(e);
         }
         return Optional.empty();
     }
 
+    /**
+     * Изменить запись о телефоне в БД
+     * @param id уникальный ключ записи в БД
+     * @param phone информация о телефоне
+     * @return измененная запись о телефоне
+     */
     @Override
     public Phone update(Long id, Phone phone) {
         String query = "UPDATE phones SET model=?, manufacturer=?, production_date=?, serial_number=?, color=? WHERE id = ? RETURNING *;";
@@ -89,11 +110,16 @@ public class PhoneRepositoryImpl implements PhoneRepository {
             ResultSet resultSet = statement.executeQuery();
             return phoneResultMapper.map(resultSet);
         } catch (SQLException e) {
-            log.log(Level.ERROR, e.getMessage());
+            logger.error(e);
         }
-        throw new IllegalArgumentException(ERR_MSG);
+        throw new  NotValidFieldInputException();
     }
 
+    /**
+     * Удалить запись о телефоне из БД
+     * @param phone информация о телефоне
+     * @return информация о удаленной записи
+     */
     @Override
     public Phone delete(Phone phone) {
         String query = "DELETE FROM phones WHERE id = ? RETURNING *;";
@@ -103,8 +129,8 @@ public class PhoneRepositoryImpl implements PhoneRepository {
             ResultSet resultSet = statement.executeQuery();
             return phoneResultMapper.map(resultSet);
         } catch (SQLException e) {
-            log.log(Level.ERROR, e.getMessage());
+            logger.error(e);
         }
-        throw new IllegalArgumentException(ERR_MSG);
+        throw new  NotValidFieldInputException();
     }
 }
