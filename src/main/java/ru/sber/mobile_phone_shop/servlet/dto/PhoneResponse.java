@@ -1,5 +1,13 @@
 package ru.sber.mobile_phone_shop.servlet.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -9,6 +17,9 @@ public class PhoneResponse {
     private String model;
     private UUID serialNumber;
     private String color;
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonFormat(pattern = "dd.MM.yyyy")
     private LocalDate productionDate;
 
     public PhoneResponse() {}
@@ -46,6 +57,7 @@ public class PhoneResponse {
         this.model = model;
     }
 
+    @JsonProperty("serial_number")
     public UUID getSerialNumber() {
         return serialNumber;
     }
@@ -62,11 +74,24 @@ public class PhoneResponse {
         this.color = color;
     }
 
+    @JsonProperty("production_date")
     public LocalDate getProductionDate() {
         return productionDate;
     }
 
     public void setProductionDate(LocalDate productionDate) {
         this.productionDate = productionDate;
+    }
+
+    @Override
+    public String toString() {
+        return "PhoneResponse{" +
+                "id=" + id +
+                ", manufacturer='" + manufacturer + '\'' +
+                ", model='" + model + '\'' +
+                ", serialNumber=" + serialNumber +
+                ", color='" + color + '\'' +
+                ", productionDate=" + productionDate +
+                '}';
     }
 }

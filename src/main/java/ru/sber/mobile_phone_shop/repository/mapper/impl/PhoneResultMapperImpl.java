@@ -30,6 +30,7 @@ public class PhoneResultMapperImpl implements PhoneResultMapper {
                     )
             );
             phone.setColor(resultSet.getString(6));
+            phones.add(phone);
         }
         return phones;
     }

@@ -19,7 +19,7 @@ public class PhoneServiceImpl implements PhoneService {
     }
 
     @Override
-    public PhoneResponse getPhoneById(Long id) {
+    public PhoneResponse getPhoneById(Long id) throws IllegalArgumentException {
         Phone phone = getPhoneModelById(id);
         return phoneMapper.map(phone);
     }
@@ -43,7 +43,7 @@ public class PhoneServiceImpl implements PhoneService {
 
     @Override
     public PhoneResponse update(Long id, PhoneRequest phoneRequest) {
-        Phone phone = getPhoneModelById(id);
+        Phone phone = phoneMapper.map(phoneRequest);
         return phoneMapper.map(
                 phoneRepository.update(id, phone)
         );

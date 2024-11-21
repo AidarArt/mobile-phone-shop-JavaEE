@@ -1,13 +1,25 @@
 package ru.sber.mobile_phone_shop.servlet.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+
 import java.time.LocalDate;
 import java.util.UUID;
 
 public class PhoneRequest {
     private String manufacturer;
     private String model;
+    @JsonProperty("serial_number")
     private UUID serialNumber;
     private String color;
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonProperty("production_date")
+    @JsonFormat(pattern = "dd.MM.yyyy")
     private LocalDate productionDate;
 
     public PhoneRequest() {}
