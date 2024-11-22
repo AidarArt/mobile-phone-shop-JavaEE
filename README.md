@@ -23,4 +23,5 @@
         * -> перейти на вкладку **Deployment** и добавить артифакт
         * -> нажать ***'Apply'***
         * -> Подключить IDE к вашей БД и выполнить скрипт [***init.sql***](src/main/resources/sql/init.sql)
+        * -> Выполнить скрипт [***test-data.sql***](src/main/resources/sql/test-data.sql) для заполения тестовыми данными
         * Запустить проект кнопкой 'Run ▶'
